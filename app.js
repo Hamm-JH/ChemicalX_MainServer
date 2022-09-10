@@ -9,10 +9,25 @@ app.get('/', (req, res) => {
   res.send("3002 domain")
 })
 
+app.get('/CON', (req, res) => {
+  res.statusCode = 200;
+  res.send();
+})
 
-app.get('/student', (req, res) => {
+app.get('/BCI', (req, res) => {
+  
+  console.log(req.body);
+  console.log('ip : ', req.ip);
+
+  var lastIP = req.ip.split('.')[req.ip.split('.').length - 1];
+
+  console.log('last ip num:: ', lastIP);
+
     
-    // 요청을 보내는 모듈
+});
+
+app.get('/test', (req, res) => {
+  // 요청을 보내는 모듈
   request.get({
     // 가져온 데이터를 어떻게 읽을건지 정의
     // 텍스트의 경우 :: application/text
@@ -30,9 +45,7 @@ app.get('/student', (req, res) => {
     // console.log(body.message);
     // res.body("Data - received");
   })
-});
-
-
+})
 
 app.listen(port, () => {
   console.log(`app listening on port ${port}`)
