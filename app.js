@@ -19,6 +19,22 @@ var data1 = {
   "PoorSignal": 0,
 }
 
+var data2 = {
+  "Meditation" : 0,
+  "Attention" : 0,
+  "EEG" : {
+    "delta" : 0,
+    "theta" : 0,
+    "lowAlpha" : 0,
+    "highAlpha" : 0,
+    "lowBeta" : 0,
+    "highBeta" : 0,
+    "lowGamma" : 0,
+    "midGamma" : 0,
+  },
+  "PoorSignal": 0,
+}
+
 app.use(express.json());
 
 app.get('/', (req, res) => {
@@ -36,15 +52,18 @@ app.get('/BCI', (req, res) => {
   // console.log('ip : ', req.ip);
   // console.log()
 
-  var lastIP = req.ip.split('.')[req.ip.split('.').length - 1];
+  var lastIP = Number(req.ip.split('.')[req.ip.split('.').length - 1]);
 
   // console.log('last ip num:: ', lastIP);
 
-  GetParam(JSON.stringify(req.body))
+  GetParam(JSON.stringify(req.body), lastIP);
 
-  if (lastIP == 21) {
-    // console.log('hello ', lastIP)
+  var resultData = {
+    data1,
+    data2
   }
+  console.log();
+  console.log(resultData);
 
   res.statusCode = 200;
   res.send();
@@ -76,8 +95,13 @@ app.listen(port, () => {
 });
 
 function GetParam(str = "", ipNum = 0) {
+
+  // console.log(ipNum);
   // console.log(str);
   // str = str.allReplace({"{": "", '"': "", "}": ""})
+  var tData = ipNum == 21 ? data1 : data2;
+
+  // console.log(data1);
   str = str.replaceAll('"', '');
   str = str.replaceAll('{', '');
   str = str.replaceAll('}', '');
@@ -87,42 +111,31 @@ function GetParam(str = "", ipNum = 0) {
   const splits = str.split(':');
   
   if (splits[0] == 'Meditation') {
-    // console.log(str);
-    // console.log(splits[0]);
-    // console.log(splits[1]);
-    // console.log(splits[2]);
+    tData["Meditation"] = Number(splits[2]);
 
     // console.log(Number(splits[2]));
-    data1["Meditation"] = Number(splits[2]);
     // console.log('data1["Meditation"] : ', data1["Meditation"]);
   }
   else if (splits[0] == 'Attention') {
-    // console.log('Attention');
+    tData["Attention"] = Number(splits[2]);
 
-    // console.log(splits[0]);
-    // console.log(splits[1]);
-    // console.log(splits[2]);
-    data1["Attention"] = Number(splits[2]);
     // console.log('data1["Attention"] : ', data1["Attention"])
   }
   else if (splits[0] == 'EEG') {
-    // console.log('EEG');
     str = str.replaceAll("\\n", ":")
-    // console.log(str);
-    // splits = str.split(':');
     
     const _splits = str.split(':');
-    data1["EEG"]["delta"] = Number(_splits[4]);
-    data1["EEG"]["theta"] = Number(_splits[6]);
+    tData["EEG"]["delta"] = Number(_splits[4]);
+    tData["EEG"]["theta"] = Number(_splits[6]);
 
-    data1["EEG"]["lowAlpha"] = Number(_splits[8]);
-    data1["EEG"]["highAlpha"] = Number(_splits[10]);
+    tData["EEG"]["lowAlpha"] = Number(_splits[8]);
+    tData["EEG"]["highAlpha"] = Number(_splits[10]);
 
-    data1["EEG"]["lowBeta"] = Number(_splits[12]);
-    data1["EEG"]["highBeta"] = Number(_splits[14]);
+    tData["EEG"]["lowBeta"] = Number(_splits[12]);
+    tData["EEG"]["highBeta"] = Number(_splits[14]);
     
-    data1["EEG"]["lowGamma"] = Number(_splits[16]);
-    data1["EEG"]["midGamma"] = Number(_splits[18]);
+    tData["EEG"]["lowGamma"] = Number(_splits[16]);
+    tData["EEG"]["midGamma"] = Number(_splits[18]);
 
     // console.log(data1);
     // console.log();
@@ -155,14 +168,10 @@ function GetParam(str = "", ipNum = 0) {
     // console.log(_splits[19]); // 
   }
   else if (splits[0] == 'PoorSignal') {
-    // console.log('PoorSignal');
-    // console.log(splits[0]);
-    // console.log(splits[1]);
-    // console.log(splits[2]);
-    
     const _splits = splits[2].split(' ');
+    tData["PoorSignal"] = Number(_splits[1]);
+
     // console.log(_splits);
-    data1["PoorSignal"] = Number(_splits[1]);
     // console.log(data1.PoorSignal);
   }
   
